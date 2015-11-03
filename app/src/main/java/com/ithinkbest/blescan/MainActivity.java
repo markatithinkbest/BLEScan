@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
@@ -47,10 +48,16 @@ public class MainActivity extends ActionBarActivity {
     private List<ScanFilter> filters;
     private BluetoothGatt mGatt;
 
+    private List<BluetoothDevice> bleList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
+
+        bleList=new ArrayList<>();
+
+
         mHandler = new Handler();
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, "BLE Not Supported",
@@ -155,11 +162,22 @@ public class MainActivity extends ActionBarActivity {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.i(TAG+"callbackType", String.valueOf(callbackType));
-            Log.i(TAG+"result", result.toString());
+//            Log.i(TAG+"callbackType", String.valueOf(callbackType));
+//            Log.i(TAG+"result", result.toString());
             BluetoothDevice btDevice = result.getDevice();
-            Log.i(TAG+"===>", btDevice.toString());
 
+            if (bleList.contains(btDevice)){
+                Log.i(TAG+"btDevice", btDevice+" already scanned!");
+
+            }else {
+                bleList.add(btDevice);
+                Log.i(TAG + "btDevice"," cnt="+ bleList.size());
+
+                Log.i(TAG + "===>", btDevice.toString()+" "+btDevice.getName());
+                ScanRecord sr = result.getScanRecord();
+
+                Log.i(TAG + "ScanRecord===>", sr.toString());
+            }
          // NO NEED TO CONNECT
        //     connectToDevice(btDevice);
         }
