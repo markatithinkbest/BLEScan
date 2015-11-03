@@ -111,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mGatt == null) {
             return;
         }
@@ -167,16 +168,36 @@ public class MainActivity extends ActionBarActivity {
             BluetoothDevice btDevice = result.getDevice();
 
             if (bleList.contains(btDevice)){
-                Log.i(TAG+"btDevice", btDevice+" already scanned!");
+//                Log.i(TAG+"btDevice", btDevice+" already scanned!");
 
             }else {
                 bleList.add(btDevice);
-                Log.i(TAG + "btDevice"," cnt="+ bleList.size());
+                Log.i(TAG + "btDevice", " cnt="+ bleList.size());
 
                 Log.i(TAG + "===>", btDevice.toString()+" "+btDevice.getName());
                 ScanRecord sr = result.getScanRecord();
 
-                Log.i(TAG + "ScanRecord===>", sr.toString());
+                String strScanRecord=Util.byteArrayToHex(sr.getBytes());
+
+                Log.i(TAG + "ScanRecord===>","size="+sr.getBytes().length+" "+strScanRecord+" "+ sr.toString());
+                                          //0201061aff4c000215b9407f3
+                                          //0201061aff4c000215
+//                02 01 06 1a ff 4c 00 02 15 wiki
+//                                          0201061aff4c000215 wiki
+                //https://developer.mbed.org/blog/entry/BLE-Beacons-URIBeacon-AltBeacons-iBeacon/
+//                WRONG String strHexIBeaconPrefix="0201061AFF004C0215";
+                String strHexIBeaconPrefix="0201061aff4c000215";
+
+                if (strScanRecord.toUpperCase().startsWith(strHexIBeaconPrefix.toUpperCase())){
+                    Log.i(TAG + "###iBeacon","T H I S    I S   I B E A C O N!");
+
+                }
+
+
+//                https://developer.mbed.org/blog/entry/BLE-Beacons-URIBeacon-AltBeacons-iBeacon/
+
+//                System.out.println(Hex.encodeHexString(sr.getBytes()));
+//                System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(sr.getBytes()));
             }
          // NO NEED TO CONNECT
        //     connectToDevice(btDevice);
