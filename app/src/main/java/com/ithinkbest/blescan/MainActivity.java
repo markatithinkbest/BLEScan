@@ -176,7 +176,7 @@ public class MainActivity extends ActionBarActivity {
 
                 Log.i(TAG + "===>", btDevice.toString()+" "+btDevice.getName());
                 ScanRecord sr = result.getScanRecord();
-
+                byte[] scanRecord=sr.getBytes();
                 String strScanRecord=Util.byteArrayToHex(sr.getBytes());
 
                 Log.i(TAG + "ScanRecord===>","size="+sr.getBytes().length+" "+strScanRecord+" "+ sr.toString());
@@ -190,6 +190,16 @@ public class MainActivity extends ActionBarActivity {
 
                 if (strScanRecord.toUpperCase().startsWith(strHexIBeaconPrefix.toUpperCase())){
                     Log.i(TAG + "###iBeacon","T H I S    I S   I B E A C O N!");
+
+                    int startByte=0;
+                    //http://stackoverflow.com/questions/11380062/what-does-value-0xff-do-in-java
+                    //Here is your Major value
+                    int major = (scanRecord[25] & 0xff) * 0x100 + (scanRecord[26] & 0xff);
+
+                    //Here is your Minor value
+                    int minor = (scanRecord[27] & 0xff) * 0x100 + (scanRecord[28] & 0xff);
+                    Log.i(TAG + "###iBeacon","major="+major+" minor="+minor);
+
 
                 }
 
