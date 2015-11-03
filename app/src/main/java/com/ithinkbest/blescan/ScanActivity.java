@@ -62,7 +62,7 @@ public class ScanActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "...scanning iBeacon", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
+                textView.setText("");
                 bleList=new ArrayList<>();
                 sb=new StringBuilder();
                 mLEScanner.startScan(filters, settings, mScanCallback);
