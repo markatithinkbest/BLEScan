@@ -1,6 +1,5 @@
 package com.ithinkbest.blescan;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -24,22 +23,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(21)
-public class MainActivity extends ActionBarActivity {
+public class ScanActivity extends AppCompatActivity {
     private final String TAG="ZZZ";
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
@@ -57,7 +52,24 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
+        setContentView(R.layout.activity_scan);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                bleList=new ArrayList<>();
+                sb=new StringBuilder();
+                mLEScanner.startScan(filters, settings, mScanCallback);
+            }
+        });
+
+
         textView=(TextView)findViewById(R.id.textView);
 
         bleList=new ArrayList<>();
@@ -72,20 +84,6 @@ public class MainActivity extends ActionBarActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
     }
 
     @Override
@@ -187,8 +185,8 @@ public class MainActivity extends ActionBarActivity {
                 String strScanRecord=Util.byteArrayToHex(sr.getBytes());
 
 //                Log.i(TAG + "ScanRecord===>","size="+sr.getBytes().length+" "+strScanRecord+" "+ sr.toString());
-                                          //0201061aff4c000215b9407f3
-                                          //0201061aff4c000215
+                //0201061aff4c000215b9407f3
+                //0201061aff4c000215
 //                02 01 06 1a ff 4c 00 02 15 wiki
 //                                          0201061aff4c000215 wiki
                 //https://developer.mbed.org/blog/entry/BLE-Beacons-URIBeacon-AltBeacons-iBeacon/
@@ -197,10 +195,10 @@ public class MainActivity extends ActionBarActivity {
 
                 if (strScanRecord.toUpperCase().startsWith(strHexIBeaconPrefix.toUpperCase())){
                     bleList.add(btDevice);
-                    Log.i(TAG + "btDevice", " cnt="+ bleList.size());
+                    Log.i(TAG + "btDevice", " cnt=" + bleList.size());
 
-                    Log.i(TAG + "###iBeacon","T H I S    I S   I B E A C O N! "+btDevice);
-                    sb.append("<h1>").append(btDevice).append("</h1>");
+                    Log.i(TAG + "###iBeacon", "T H I S    I S   I B E A C O N! " + btDevice);
+                  //  sb.append("<h1>").append(btDevice).append("</h1>");
                     int startByte=0;
                     //http://stackoverflow.com/questions/11380062/what-does-value-0xff-do-in-java
                     //Here is your Major value
@@ -209,7 +207,14 @@ public class MainActivity extends ActionBarActivity {
                     //Here is your Minor value
                     int minor = (scanRecord[27] & 0xff) * 0x100 + (scanRecord[28] & 0xff);
                     Log.i(TAG + "###iBeacon", "major=" + major + " minor=" + minor);
-                    sb.append("<h2>Major|Minor = ").append(major).append("|").append(minor).append("</h2>");
+
+                    String strMajor=String.format("%05d",major);
+                    String strMinor=String.format("%05d",minor);
+
+//                    sb.append("<h2>Major|Minor = ").append(major).append("|").append(minor).append("</h2>");
+                    sb.append("<h1>").append(strMajor).append(":").append(strMinor).append(" ");
+                    sb.append(" ").append(btDevice).append("</h1>");
+
                     textView.setText(Html.fromHtml(sb.toString()));
 
                 }
@@ -220,8 +225,8 @@ public class MainActivity extends ActionBarActivity {
 //                System.out.println(Hex.encodeHexString(sr.getBytes()));
 //                System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(sr.getBytes()));
             }
-         // NO NEED TO CONNECT
-       //     connectToDevice(btDevice);
+            // NO NEED TO CONNECT
+            //     connectToDevice(btDevice);
         }
 
         @Override
@@ -336,6 +341,7 @@ public class MainActivity extends ActionBarActivity {
 //        return super.onOptionsItemSelected(item);
 //    }
 //}
+
 
 
 
