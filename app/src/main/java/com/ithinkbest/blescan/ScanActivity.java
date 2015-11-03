@@ -39,7 +39,7 @@ public class ScanActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
     private Handler mHandler;
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 20000;
     private BluetoothLeScanner mLEScanner;
     private ScanSettings settings;
     private List<ScanFilter> filters;
@@ -60,7 +60,7 @@ public class ScanActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "...scanning iBeacon", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 bleList=new ArrayList<>();
