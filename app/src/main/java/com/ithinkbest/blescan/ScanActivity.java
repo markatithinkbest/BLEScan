@@ -46,6 +46,8 @@ public class ScanActivity extends AppCompatActivity {
     private BluetoothGatt mGatt;
 
     private List<BluetoothDevice> bleList;
+    private List<IBeaconDevice> iBeaconDeviceList;
+
     private TextView textView;
 
     StringBuilder sb;
@@ -60,12 +62,15 @@ public class ScanActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "...scanning iBeacon", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "...scanning iBeacon 其實一直在進行中", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                textView.setText("");
-                bleList=new ArrayList<>();
-                sb=new StringBuilder();
-                mLEScanner.startScan(filters, settings, mScanCallback);
+//                textView.setText("");
+//                bleList=new ArrayList<>();
+//                sb=new StringBuilder();
+////                mLEScanner.startScan(filters, settings, mScanCallback);
+//                mLEScanner.startScan( mScanCallback);
+
+
             }
         });
 
@@ -73,6 +78,7 @@ public class ScanActivity extends AppCompatActivity {
         textView=(TextView)findViewById(R.id.textView);
 
         bleList=new ArrayList<>();
+        iBeaconDeviceList=new ArrayList<>();
         sb=new StringBuilder();
 
         mHandler = new Handler();
@@ -166,8 +172,11 @@ public class ScanActivity extends AppCompatActivity {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
+// TODO 如果是 iBeacon, 認 UUID/Major/Minor, 取 Tx, RSSI
+            // 如果是 Estimote Beacon 加取溫度
+
 //            Log.i(TAG+"callbackType", String.valueOf(callbackType));
-//            Log.i(TAG+"result", result.toString());
+            Log.i(TAG+"result", result.toString());
             BluetoothDevice btDevice = result.getDevice();
 
 
@@ -194,6 +203,7 @@ public class ScanActivity extends AppCompatActivity {
                 String strHexIBeaconPrefix="0201061aff4c000215";
 
                 if (strScanRecord.toUpperCase().startsWith(strHexIBeaconPrefix.toUpperCase())){
+
                     bleList.add(btDevice);
                     Log.i(TAG + "btDevice", " cnt=" + bleList.size());
 
@@ -250,7 +260,7 @@ public class ScanActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i(TAG+"onLeScan", device.toString());
+                            Log.i(TAG + "onLeScan", device.toString());
                             connectToDevice(device);
                         }
                     });
